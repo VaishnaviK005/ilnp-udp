@@ -57,3 +57,9 @@ From project #4 (Ananya, merged, not modified by us):
 ## Known issues (not caused by project #6)
 - `ipv6-ilnp-nonce-ping` fails at baseline: the "ordinary IPv6" flow reuses the ILNP flow's Identifiers on another prefix and gets a nonce.
 - `Ipv6OptionNonce::Process` passes protocol 58 to `LearnIlnpSession`, so a received UDP nonce is not reused for the reply: each direction of a UDP flow gets its own nonce (draft-nonce NC3 wants the same value).
+
+## Final results (clean rebuild, -j4)
+See docs/final-results.txt: udp-ilnp, udp, ipv6-protocol, ipv6-extension-header, ipv6-raw, ipv6-dual-stack,
+ipv6-forwarding, ipv6-fragmentation, ipv6-list-routing, ipv4-raw, ipv6-address-helper PASS.
+ipv6-ilnp-nonce-ping FAILS exactly as at baseline (see Known issues). Locator-change behaviour was verified
+only against the temporary IlnpIlccStub, not the real ILCC.
