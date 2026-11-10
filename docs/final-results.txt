@@ -1,0 +1,37 @@
+== ./test.py -s udp-ilnp --no-build
+[1/1] [32mPASS[0m: TestSuite udp-ilnp
+1 of 1 tests passed (1 passed, 0 skipped, 0 failed, 0 crashed, 0 valgrind errors)
+== ./test.py -s udp --no-build
+[1/1] [32mPASS[0m: TestSuite udp
+1 of 1 tests passed (1 passed, 0 skipped, 0 failed, 0 crashed, 0 valgrind errors)
+== ./test.py -s ipv6-protocol --no-build
+[1/1] [32mPASS[0m: TestSuite ipv6-protocol
+1 of 1 tests passed (1 passed, 0 skipped, 0 failed, 0 crashed, 0 valgrind errors)
+== ./test.py -s ipv6-extension-header --no-build
+[1/1] [32mPASS[0m: TestSuite ipv6-extension-header
+1 of 1 tests passed (1 passed, 0 skipped, 0 failed, 0 crashed, 0 valgrind errors)
+== ./test.py -s ipv6-raw --no-build
+[1/1] [32mPASS[0m: TestSuite ipv6-raw
+1 of 1 tests passed (1 passed, 0 skipped, 0 failed, 0 crashed, 0 valgrind errors)
+== ./test.py -s ipv6-dual-stack --no-build
+[1/1] [32mPASS[0m: TestSuite ipv6-dual-stack
+1 of 1 tests passed (1 passed, 0 skipped, 0 failed, 0 crashed, 0 valgrind errors)
+== ./test.py -s ipv6-forwarding --no-build
+[1/1] [32mPASS[0m: TestSuite ipv6-forwarding
+1 of 1 tests passed (1 passed, 0 skipped, 0 failed, 0 crashed, 0 valgrind errors)
+== ./test.py -s ipv6-fragmentation --no-build
+[1/1] [32mPASS[0m: TestSuite ipv6-fragmentation
+1 of 1 tests passed (1 passed, 0 skipped, 0 failed, 0 crashed, 0 valgrind errors)
+== ./test.py -s ipv6-list-routing --no-build
+[1/1] [32mPASS[0m: TestSuite ipv6-list-routing
+1 of 1 tests passed (1 passed, 0 skipped, 0 failed, 0 crashed, 0 valgrind errors)
+== ./test.py -s ipv6-ilnp-nonce-ping --no-build
+[1/1] [01;31mFAIL[0m: TestSuite ipv6-ilnp-nonce-ping
+0 of 1 tests passed (0 passed, 0 skipped, 1 failed, 0 crashed, 0 valgrind errors)
+List of FAILed tests:
+== ./test.py -s ipv4-raw --no-build
+[1/1] [32mPASS[0m: TestSuite ipv4-raw
+1 of 1 tests passed (1 passed, 0 skipped, 0 failed, 0 crashed, 0 valgrind errors)
+== ./test.py -s ipv6-address-helper --no-build
+[1/1] [32mPASS[0m: TestSuite ipv6-address-helper
+1 of 1 tests passed (1 passed, 0 skipped, 0 failed, 0 crashed, 0 valgrind errors)
