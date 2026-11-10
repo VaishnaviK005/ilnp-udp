@@ -391,6 +391,7 @@ set(test_sources
     test/tcp-zero-window-test.cc
     test/udp-test.cc
     test/ipv6-ilnp-nonce-ping-test.cc
+    test/udp-ilnp-test.cc
     test/internet-traced-callback-typedef-test-suite.cc
 )
 
