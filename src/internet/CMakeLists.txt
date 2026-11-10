@@ -66,6 +66,8 @@ set(source_files
     model/ipv6-option-header.cc
     model/ipv6-option.cc
     model/ipv6-option-nonce.cc
+    model/ilnp-locator-provider.cc
+    model/ilnp-ilcc-stub.cc
     model/ipv6-packet-filter.cc
     model/ipv6-packet-info-tag.cc
     model/ipv6-packet-probe.cc
@@ -195,6 +197,8 @@ set(header_files
     model/ipv6-option-header.h
     model/ipv6-option.h
     model/ipv6-option-nonce.h
+    model/ilnp-locator-provider.h
+    model/ilnp-ilcc-stub.h
     model/ipv6-packet-filter.h
     model/ipv6-packet-info-tag.h
     model/ipv6-packet-probe.h
