@@ -65,6 +65,7 @@ set(source_files
     model/ipv6-option-demux.cc
     model/ipv6-option-header.cc
     model/ipv6-option.cc
+    model/ipv6-option-nonce.cc
     model/ipv6-packet-filter.cc
     model/ipv6-packet-info-tag.cc
     model/ipv6-packet-probe.cc
@@ -127,7 +128,6 @@ set(source_files
     model/udp-socket-factory.cc
     model/udp-socket-impl.cc
     model/udp-socket.cc
-    model/ipv6-option-nonce.cc
 )
 
 set(header_files
@@ -194,6 +194,7 @@ set(header_files
     model/ipv6-list-routing.h
     model/ipv6-option-header.h
     model/ipv6-option.h
+    model/ipv6-option-nonce.h
     model/ipv6-packet-filter.h
     model/ipv6-packet-info-tag.h
     model/ipv6-packet-probe.h
@@ -252,7 +253,6 @@ set(header_files
     model/udp-socket-factory.h
     model/udp-socket.h
     model/windowed-filter.h
-    model/ipv6-option-nonce.h
 )
 
 set(private_header_files)
@@ -262,17 +262,62 @@ if(WIN32)
   )
 endif()
 
+# ns3tcp system tests live here because they exercise TCP; they pull in
+# applications and point-to-point (and csma for the no-delay / socket tests) so
+# they are linked conditionally to keep internet's test binary buildable when
+# those modules are not enabled.
+set(ns3tcp_sources)
+set(ns3tcp_libs)
+if((applications
+    IN_LIST
+    ns3-all-enabled-modules
+   )
+   AND (point-to-point
+        IN_LIST
+        ns3-all-enabled-modules
+       )
+)
+  set(ns3tcp_sources
+      test/ns3tcp-cubic-test-suite.cc
+      test/ns3tcp-loss-test-suite.cc
+      test/ns3tcp-socket-writer.cc
+      test/ns3tcp-state-test-suite.cc
+  )
+  set(ns3tcp_libs
+      ${libapplications}
+      ${libpoint-to-point}
+  )
+  if(csma
+     IN_LIST
+     ns3-all-enabled-modules
+  )
+    list(
+      APPEND
+      ns3tcp_sources
+      test/ns3tcp-no-delay-test-suite.cc
+      test/ns3tcp-socket-test-suite.cc
+    )
+    list(
+      APPEND
+      ns3tcp_libs
+      ${libcsma}
+    )
+  endif()
+endif()
+
 set(test_sources
+    ${ns3tcp_sources}
     test/global-route-manager-impl-test-suite.cc
+    test/icmp-checksum-test-suite.cc
     test/icmp-test.cc
     test/internet-stack-helper-test-suite.cc
-    test/ipv4-address-generator-test-suite.cc
     test/ipv4-address-helper-test-suite.cc
     test/ipv4-deduplication-test.cc
     test/ipv4-forwarding-test.cc
     test/ipv4-fragmentation-test.cc
     test/global-routing-test-suite.cc
     test/ipv4-header-test.cc
+    test/ipv4-icmp-no-route-test-suite.cc
     test/ipv4-list-routing-test-suite.cc
     test/ipv4-packet-info-tag-test-suite.cc
     test/ipv4-raw-test.cc
@@ -280,7 +325,6 @@ set(test_sources
     test/ipv4-static-routing-test-suite.cc
     test/ipv4-test.cc
     test/ipv6-address-duplication-test.cc
-    test/ipv6-address-generator-test-suite.cc
     test/ipv6-address-helper-test-suite.cc
     test/ipv6-dual-stack-test-suite.cc
     test/ipv6-extension-header-test-suite.cc
@@ -302,6 +346,7 @@ set(test_sources
     test/tcp-close-test.cc
     test/tcp-cong-avoid-test.cc
     test/tcp-datasentcb-test.cc
+    test/tcp-dctcp-loss-test-suite.cc
     test/tcp-dctcp-test.cc
     test/tcp-ecn-test.cc
     test/tcp-endpoint-bug2211.cc
@@ -318,6 +363,7 @@ set(test_sources
     test/tcp-linux-reno-test.cc
     test/tcp-loss-test.cc
     test/tcp-lp-test.cc
+    test/tcp-no-sack-dupack-test.cc
     test/tcp-option-test.cc
     test/tcp-pacing-test.cc
     test/tcp-pkts-acked-test.cc
@@ -335,12 +381,15 @@ set(test_sources
     test/tcp-tx-buffer-test.cc
     test/tcp-vegas-test.cc
     test/tcp-veno-test.cc
+    test/tcp-window-update-test-suite.cc
     test/tcp-wscaling-test.cc
     test/tcp-yeah-test.cc
     test/tcp-zero-window-test.cc
     test/udp-test.cc
     test/ipv6-ilnp-nonce-ping-test.cc
+    test/internet-traced-callback-typedef-test-suite.cc
 )
+
 find_package(OpenSSL REQUIRED)
 build_lib(
   LIBNAME internet
@@ -351,5 +400,6 @@ build_lib(
                     ${libtraffic-control}
                     OpenSSL::Crypto
   TEST_SOURCES ${test_sources}
+  TEST_LIBRARIES_TO_LINK ${ns3tcp_libs}
   GENERATE_EXPORT_HEADER
 )
