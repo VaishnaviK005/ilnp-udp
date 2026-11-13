@@ -279,6 +279,8 @@ class UdpIlnpTwoNodeTestCase : public TestCase
     uint32_t m_udpTxWithNonce{0};                          //!< of which carry the nonce
     std::map<uint64_t, std::vector<uint8_t>> m_firstNonce; //!< first nonce per sender Identifier
     uint32_t m_nonceMismatch{0};                           //!< packets with another nonce value
+    std::vector<uint8_t> m_sessionNonce;                   //!< nonce of the first UDP packet
+    uint32_t m_crossDirMismatch{0};                        //!< packets whose nonce differs from it
     std::vector<uint32_t> m_ifaceA;                        //!< interface index of A
     uint32_t m_ifA{0};                                     //!< interface of A
     uint32_t m_ifB{0};                                     //!< interface of B
@@ -318,9 +320,15 @@ class UdpIlnpTwoNodeTestCase : public TestCase
         if (nonce)
         {
             m_udpTxWithNonce++;
-            // NOTE: one nonce per direction. NC3 (same value in both directions) is NOT
-            // met for UDP today because Ipv6OptionNonce::Process learns sessions under
-            // protocol 58 only (project #4 code, not changed here).
+            // NC3 (draft-nonce, section 4): one session, same nonce value in both directions.
+            if (m_sessionNonce.empty())
+            {
+                m_sessionNonce = value;
+            }
+            else if (value != m_sessionNonce)
+            {
+                m_crossDirMismatch++;
+            }
             uint64_t sender = IlnpLocatorProvider::GetIdentifier(hdr.GetSource());
             auto it = m_firstNonce.find(sender);
             if (it == m_firstNonce.end())
@@ -443,12 +451,18 @@ class UdpIlnpTwoNodeTestCase : public TestCase
         if (m_ilnpClient)
         {
             NS_TEST_EXPECT_MSG_EQ(m_udpTx, 20u, "10 requests + 10 echoes");
-            // Both ends in ILNP mode: every request and echo has the nonce. If the server
-            // is plain IPv6 only the client requests are ILNP; the plain replies are ordinary.
+            // Every request and echo has the nonce. Even with a plain-IPv6 server socket, the
+            // server's L3 learns the nonce from the request (under the UDP protocol number) and
+            // reuses it in the reply, so both directions carry the same value (NC3).
             NS_TEST_EXPECT_MSG_EQ(m_udpTxWithNonce,
-                                  m_ilnpServer ? m_udpTx : 10u,
+                                  m_udpTx,
                                   "ILNP UDP packets must carry the Nonce option");
-            NS_TEST_EXPECT_MSG_EQ(m_nonceMismatch, 0u, "nonce must stay constant within a direction across the Locator change");
+            NS_TEST_EXPECT_MSG_EQ(m_nonceMismatch,
+                                  0u,
+                                  "nonce must stay constant within a direction across the Locator change");
+            NS_TEST_EXPECT_MSG_EQ(m_crossDirMismatch,
+                                  0u,
+                                  "request and echo must carry the same nonce (NC3)");
         }
         if (m_change)
         {
