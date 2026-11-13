@@ -82,6 +82,7 @@ uint8_t
 Ipv6OptionPad1::Process(Ptr<Packet> packet,
                         uint8_t offset,
                         const Ipv6Header& ipv6Header,
+                        uint8_t nextHeader,
                         bool& isDropped)
 {
     NS_LOG_FUNCTION(this << packet << offset << ipv6Header << isDropped);
@@ -131,6 +132,7 @@ uint8_t
 Ipv6OptionPadn::Process(Ptr<Packet> packet,
                         uint8_t offset,
                         const Ipv6Header& ipv6Header,
+                        uint8_t nextHeader,
                         bool& isDropped)
 {
     NS_LOG_FUNCTION(this << packet << offset << ipv6Header << isDropped);
@@ -180,6 +182,7 @@ uint8_t
 Ipv6OptionJumbogram::Process(Ptr<Packet> packet,
                              uint8_t offset,
                              const Ipv6Header& ipv6Header,
+                             uint8_t nextHeader,
                              bool& isDropped)
 {
     NS_LOG_FUNCTION(this << packet << offset << ipv6Header << isDropped);
@@ -229,6 +232,7 @@ uint8_t
 Ipv6OptionRouterAlert::Process(Ptr<Packet> packet,
                                uint8_t offset,
                                const Ipv6Header& ipv6Header,
+                               uint8_t nextHeader,
                                bool& isDropped)
 {
     NS_LOG_FUNCTION(this << packet << offset << ipv6Header << isDropped);
@@ -278,6 +282,7 @@ uint8_t
 Ipv6OptionNonce::Process(Ptr<Packet> packet,
                          uint8_t offset,
                          const Ipv6Header& ipv6Header,
+                         uint8_t nextHeader,
                          bool& isDropped)
 {
     NS_LOG_FUNCTION(this << packet << offset << ipv6Header << isDropped);
@@ -298,11 +303,13 @@ Ipv6OptionNonce::Process(Ptr<Packet> packet,
         Ptr<Ipv6L3Protocol> ipv6 = node->GetObject<Ipv6L3Protocol>();
 
         if (ipv6)
-        { // Pass ICMPv6 (58) as the upper-layer protocol identifier.
+        {
+            // Use the real upper-layer protocol (ICMPv6, UDP, ...) so the reply
+            // finds the same session and reuses the Nonce (draft-nonce, section 4).
             ipv6->LearnIlnpSession(ipv6Header.GetSource(),
-                       ipv6Header.GetDestination(),
-                       58, 
-                       nonceHeader.GetNonce());
+                                   ipv6Header.GetDestination(),
+                                   nextHeader,
+                                   nonceHeader.GetNonce());
         }
     }
 

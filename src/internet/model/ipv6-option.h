@@ -65,12 +65,14 @@ class Ipv6Option : public Object
      * @param packet the packet
      * @param offset the offset of the extension to process
      * @param ipv6Header the IPv6 header of packet received
+     * @param nextHeader the upper-layer protocol number that follows this extension header
      * @param isDropped if the packet must be dropped
      * @return the processed size
      */
     virtual uint8_t Process(Ptr<Packet> packet,
                             uint8_t offset,
                             const Ipv6Header& ipv6Header,
+                            uint8_t nextHeader,
                             bool& isDropped) = 0;
 
   protected:
@@ -134,12 +136,14 @@ class Ipv6OptionPad1 : public Ipv6Option
      * @param packet the packet
      * @param offset the offset of the extension to process
      * @param ipv6Header the IPv6 header of packet received
+     * @param nextHeader the upper-layer protocol number that follows this extension header
      * @param isDropped if the packet must be dropped
      * @return the processed size
      */
     uint8_t Process(Ptr<Packet> packet,
                     uint8_t offset,
                     const Ipv6Header& ipv6Header,
+                    uint8_t nextHeader,
                     bool& isDropped) override;
 };
 
@@ -185,12 +189,14 @@ class Ipv6OptionPadn : public Ipv6Option
      * @param packet the packet
      * @param offset the offset of the extension to process
      * @param ipv6Header the IPv6 header of packet received
+     * @param nextHeader the upper-layer protocol number that follows this extension header
      * @param isDropped if the packet must be dropped
      * @return the processed size
      */
     uint8_t Process(Ptr<Packet> packet,
                     uint8_t offset,
                     const Ipv6Header& ipv6Header,
+                    uint8_t nextHeader,
                     bool& isDropped) override;
 };
 
@@ -235,12 +241,14 @@ class Ipv6OptionJumbogram : public Ipv6Option
      * @param packet the packet
      * @param offset the offset of the extension to process
      * @param ipv6Header the IPv6 header of packet received
+     * @param nextHeader the upper-layer protocol number that follows this extension header
      * @param isDropped if the packet must be dropped
      * @return the processed size
      */
     uint8_t Process(Ptr<Packet> packet,
                     uint8_t offset,
                     const Ipv6Header& ipv6Header,
+                    uint8_t nextHeader,
                     bool& isDropped) override;
 };
 
@@ -286,12 +294,14 @@ class Ipv6OptionRouterAlert : public Ipv6Option
      * @param packet the packet
      * @param offset the offset of the extension to process
      * @param ipv6Header the IPv6 header of packet received
+     * @param nextHeader the upper-layer protocol number that follows this extension header
      * @param isDropped if the packet must be dropped
      * @return the processed size
      */
     uint8_t Process(Ptr<Packet> packet,
                     uint8_t offset,
                     const Ipv6Header& ipv6Header,
+                    uint8_t nextHeader,
                     bool& isDropped) override;
 };
 
@@ -343,6 +353,7 @@ public:
     uint8_t Process(Ptr<Packet> packet,
                     uint8_t offset,
                     const Ipv6Header& ipv6Header,
+                    uint8_t nextHeader,
                     bool& isDropped) override;
 };
 
