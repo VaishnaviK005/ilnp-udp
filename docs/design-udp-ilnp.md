@@ -53,11 +53,14 @@ in section 2 an ILNP-mode endpoint still matches after a Locator change.
 Every ILNP packet carries the Nonce Destination Option (draft-nonce NC1-NC3). That is done
 in L3 by project #4 (session key = Identifiers only). UDP reuses it unchanged.
 An ILNP-mode socket calls `Ipv6L3Protocol::EnableIlnpFlow(src, dst, 17)` before sending,
-because L3 only adds the nonce to flows that were enabled. Two findings in the project #4 code
-(not changed by us, need Ananya / Mohit sir): (a) `Ipv6OptionNonce::Process` hard-codes protocol
-58 when learning a session, so the UDP reply does not reuse the received nonce and each
-direction of a UDP flow gets its own nonce (NC3 not met for UDP); (b) the nonce session/flow
-key is Identifier-only, so `ipv6-ilnp-nonce-ping` fails at baseline.
+because L3 only adds the nonce to flows that were enabled. Two findings in the project #4 code:
+(a) `Ipv6OptionNonce::Process` used to hard-code protocol 58 (ICMPv6) when learning a session, so
+a UDP reply did not reuse the received nonce (NC3 not met for UDP). Fixed, as agreed in the team
+chat: `Ipv6Option::Process` now receives the upper-layer protocol number (`nextHeader`) from
+`Ipv6Extension::ProcessOptions` and passes it to `LearnIlnpSession`, so the same nonce is used in
+both directions for ICMPv6, UDP and later TCP. (b) the nonce session/flow key is Identifier-only,
+so `ipv6-ilnp-nonce-ping` fails at baseline (not caused by UDP; for Ananya). Session state is meant
+to move into the juniors' ILCC later.
 
 ## 7. Files
 New: `ilnp-locator-provider.{h,cc}`, `ilnp-ilcc-stub.{h,cc}` (temporary),

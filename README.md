@@ -48,15 +48,15 @@ Changed (additive only):
 - `src/internet/model/ipv6-end-point.{h,cc}` - ILNP mode flag
 - `src/internet/model/ipv6-end-point-demux.cc` - `AddressMatches()`, Identifier comparison
 - `src/internet/model/udp-socket-impl.{h,cc}` - `IlnpMode` attribute, Locator resolution, flow enabling
+- `src/internet/model/ipv6-option.{h,cc}`, `ipv6-extension.cc` - `Process()` gets the upper-layer protocol so the nonce session is learned under the right protocol (same nonce both ways for UDP)
 - `src/internet/CMakeLists.txt` - new files added to existing lists (plus project #4's nonce files and OpenSSL)
 
-From project #4 (Ananya, merged, not modified by us):
+From project #4 (Ananya, merged; `ipv6-option.{h,cc}` has one small change by us, listed above):
 `src/internet/model/ipv6-option-nonce.{h,cc}`, `ipv6-option.{h,cc}`, `ipv6-l3-protocol.{h,cc}`,
 `src/internet/test/ipv6-ilnp-nonce-ping-test.cc`.
 
 ## Known issues (not caused by project #6)
 - `ipv6-ilnp-nonce-ping` fails at baseline: the "ordinary IPv6" flow reuses the ILNP flow's Identifiers on another prefix and gets a nonce.
-- `Ipv6OptionNonce::Process` passes protocol 58 to `LearnIlnpSession`, so a received UDP nonce is not reused for the reply: each direction of a UDP flow gets its own nonce (draft-nonce NC3 wants the same value).
 
 ## Final results (clean rebuild, -j4)
 See docs/final-results.txt: udp-ilnp, udp, ipv6-protocol, ipv6-extension-header, ipv6-raw, ipv6-dual-stack,
